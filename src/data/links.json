@@ -1,0 +1,35 @@
+[
+  {
+    "id": "acg",
+    "title": "ACG",
+    "links": [
+      { "label": "Bilibili", "url": "https://www.bilibili.com" },
+      { "label": "AcFun", "url": "https://www.acfun.cn" },
+      { "label": "Bangumi", "url": "https://bgm.tv" },
+      { "label": "長門番堂", "url": "https://yuc.wiki"},
+      { "label": "Pixiv", "url": "https://www.pixiv.net" }
+    ]
+  },
+  {
+    "id": "person",
+    "title": "个人网站",
+    "links": [
+      { "label": "短链生成", "url": "https://s.mof.moe" },
+      { "label": "IT 工具合集", "url": "https://it.mof.moe" },
+      { "label": "文件格式转换", "url": "https://cv.mof.moe" },
+      { "label": "个人博客", "url": "https://www.zhenyan121.top" },
+      {"label": "自建GIT托管", "url": "https://git.zhenyan121.top"}
+    ]
+  },
+  {
+    "id": "community",
+    "title": "社区",
+    "links": [
+      { "label": "GitHub", "url": "https://github.com" }, 
+      { "label": "贴吧", "url": "https://tieba.baidu.com" },
+      { "label": "知乎", "url": "https://www.zhihu.com" },
+      { "label": "NGA", "url": "https://ngabbs.com" },
+      { "label": "V2EX", "url": "https://www.v2ex.com" }
+    ]
+  }
+]
