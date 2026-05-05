@@ -1,23 +1,15 @@
 <template>
   <section class="player-section">
-    <h2 class="player-heading">追番</h2>
+    <h2 class="player-heading">追番 · 幸运星</h2>
 
     <div class="player-wrapper">
-      <template v-if="loading">
-        <div class="player-placeholder">加载中…</div>
-      </template>
-      <template v-else-if="playerUrl">
-        <iframe
-          :src="playerUrl"
-          allow="autoplay; encrypted-media"
-          allowfullscreen
-          sandbox="allow-scripts allow-same-origin allow-popups"
-          class="player-frame"
-        ></iframe>
-      </template>
-      <template v-else>
-        <div class="player-placeholder">无法加载播放器</div>
-      </template>
+      <iframe
+        v-if="playerUrl"
+        :key="playerUrl"
+        :src="playerUrl"
+        allowfullscreen
+        class="player-frame"
+      ></iframe>
     </div>
 
     <div class="episode-bar">
@@ -34,57 +26,47 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 
-const API_BASE = 'https://api.bilibili.com/pgc/view/web/season?ep_id='
+const episodes = [
+  { id: 59846708, cid: 104236640, label: '第1话' },
+  { id: 934255758, cid: 104236735, label: '第2话' },
+  { id: 976767921, cid: 104236899, label: '第3话' },
+  { id: 976855059, cid: 104237054, label: '第4话' },
+  { id: 634289470, cid: 104237144, label: '第5话' },
+  { id: 379307519, cid: 104237246, label: '第6话' },
+  { id: 591853944, cid: 104237560, label: '第7话' },
+  { id: 591850815, cid: 104237744, label: '第8话' },
+  { id: 591854585, cid: 104238021, label: '第9话' },
+  { id: 806813018, cid: 104238146, label: '第10话' },
+  { id: 934290922, cid: 104238278, label: '第11话' },
+  { id: 891823944, cid: 104238448, label: '第12话' },
+  { id: 806809838, cid: 104238631, label: '第13话' },
+  { id: 421799841, cid: 104239072, label: '第14话' },
+  { id: 721841903, cid: 104239373, label: '第15话' },
+  { id: 719307234, cid: 104239579, label: '第16话' },
+  { id: 294305033, cid: 104239784, label: '第17话' },
+  { id: 934266977, cid: 104239964, label: '第18话' },
+  { id: 934323356, cid: 104240224, label: '第19话' },
+  { id: 379343867, cid: 104240673, label: '第20话' },
+  { id: 379351237, cid: 104240906, label: '第21话' },
+  { id: 719294454, cid: 104241185, label: '第22话' },
+  { id: 764317388, cid: 104241304, label: '第23话' },
+  { id: 806780385, cid: 105397332, label: '第24话' },
+  { id: 209342384, cid: 104241808, label: 'OVA' },
+]
 
-const episodes = ref([])
-const epMap = ref({})
-const current = ref(0)
-const loading = ref(true)
+const current = ref(episodes[0].id)
 
 const playerUrl = computed(() => {
-  const ep = epMap.value[current.value]
+  const ep = episodes.find((e) => e.id === current.value)
   if (!ep) return ''
-  return `https://player.bilibili.com/player.html?aid=${ep.aid}&cid=${ep.cid}&page=1&autoplay=0`
+  return `https://player.bilibili.com/player.html?aid=${ep.id}&cid=${ep.cid}&page=1&autoplay=0`
 })
 
 function selectEp(ep) {
   current.value = ep.id
 }
-
-async function fetchSeason(epId) {
-  try {
-    const res = await fetch(`${API_BASE}${epId}`)
-    const data = await res.json()
-    if (data.code !== 0 || !data.result) return
-
-    const list = data.result.episodes || []
-    for (const ep of list) {
-      if (epMap.value[ep.id]) continue
-      epMap.value[ep.id] = {
-        aid: ep.aid,
-        cid: ep.cid,
-      }
-      episodes.value.push({
-        id: ep.id,
-        label: ep.title || `第${ep.episode || '?'}集`,
-      })
-    }
-    if (list.length > 0 && !current.value) {
-      current.value = list[0].id
-    }
-  } catch {
-    // ignore
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(async () => {
-  await fetchSeason(35595)
-  await fetchSeason(278737)
-})
 </script>
 
 <style scoped>
@@ -119,16 +101,6 @@ onMounted(async () => {
   width: 100%;
   height: 100%;
   border: 0;
-}
-
-.player-placeholder {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
 }
 
 .episode-bar {
