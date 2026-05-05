@@ -61,7 +61,7 @@ const current = ref(episodes[0].aid)
 const playerUrl = computed(() => {
   const ep = episodes.find((e) => e.aid === current.value)
   if (!ep) return ''
-  return `https://player.bilibili.com/player.html?aid=${ep.aid}&bvid=${ep.bvid}&cid=${ep.cid}&page=1&autoplay=0`
+  return `https://player.bilibili.com/player.html?bvid=${ep.bvid}&cid=${ep.cid}&page=1&autoplay=0`
 })
 
 function selectEp(ep) {
