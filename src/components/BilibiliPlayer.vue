@@ -29,7 +29,7 @@
 import { ref, computed } from 'vue'
 
 const episodes = [
-  { aid: 59846708, cid: 104236640, bvid: 'BV13t411n7ex', label: '第1话' },
+  { aid: 59846708, cid: 105396981, bvid: 'BV13t411n7ex', label: '第1话' },
   { aid: 934255758, cid: 104236735, bvid: 'BV1tT4y1R7Ji', label: '第2话' },
   { aid: 976767921, cid: 104236899, bvid: 'BV1144y1a75d', label: '第3话' },
   { aid: 976855059, cid: 104237054, bvid: 'BV1W44y1Y735', label: '第4话' },
