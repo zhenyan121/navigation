@@ -8,6 +8,7 @@
         :key="playerUrl"
         :src="playerUrl"
         allowfullscreen
+        referrerpolicy="no-referrer"
         class="player-frame"
       ></iframe>
     </div>
@@ -70,7 +71,7 @@ const current = ref(episodes[0].aid)
 const playerUrl = computed(() => {
   const ep = episodes.find((e) => e.aid === current.value)
   if (!ep) return ''
-  return `https://player.bilibili.com/player.html?aid=${ep.aid}&autoplay=0`
+  return `https://player.bilibili.com/player.html?bvid=${ep.bvid}&page=1&autoplay=0`
 })
 
 const bilibiliUrl = computed(() => {
