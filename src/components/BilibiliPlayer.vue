@@ -3,23 +3,24 @@
     <h2 class="player-heading">追番 · 幸运星</h2>
 
     <div class="player-wrapper">
+      <template v-if="currentEp.ep === 35595">
+        <a
+          :href="`https://www.bilibili.com/bangumi/play/ep${currentEp.ep}`"
+          target="_blank"
+          rel="noopener"
+          class="bili-redirect"
+        >
+          <span class="redirect-icon">▶</span>
+          <span>第一集无法嵌入，点击前往 B 站观看</span>
+        </a>
+      </template>
       <iframe
-        v-if="playerUrl"
+        v-else
         :key="playerUrl"
         :src="playerUrl"
         allowfullscreen
-        referrerpolicy="no-referrer"
         class="player-frame"
       ></iframe>
-    </div>
-
-    <div class="player-actions">
-      <a
-        :href="bilibiliUrl"
-        target="_blank"
-        rel="noopener"
-        class="ext-link"
-      >在 B 站打开</a>
     </div>
 
     <div class="episode-bar">
@@ -66,18 +67,16 @@ const episodes = [
   { aid: 209342384, cid: 104241808, bvid: 'BV1Wh41147dA', ep: 278737, label: 'OVA' },
 ]
 
-const current = ref(episodes[0].aid)
+const current = ref(episodes[1].aid)
+
+const currentEp = computed(() => {
+  return episodes.find((e) => e.aid === current.value) || episodes[1]
+})
 
 const playerUrl = computed(() => {
   const ep = episodes.find((e) => e.aid === current.value)
   if (!ep) return ''
   return `https://player.bilibili.com/player.html?bvid=${ep.bvid}&page=1&autoplay=0`
-})
-
-const bilibiliUrl = computed(() => {
-  const ep = episodes.find((e) => e.aid === current.value)
-  if (!ep) return '#'
-  return `https://www.bilibili.com/bangumi/play/ep${ep.ep}`
 })
 
 function selectEp(ep) {
@@ -119,26 +118,28 @@ function selectEp(ep) {
   border: 0;
 }
 
-.player-actions {
+.bili-redirect {
+  position: absolute;
+  inset: 0;
   display: flex;
-  justify-content: flex-end;
-  margin-top: 8px;
-}
-
-.ext-link {
-  font-size: 0.8rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   color: var(--md-primary);
   text-decoration: none;
+  font-size: 0.95rem;
   font-weight: 500;
-  padding: 4px 12px;
-  border-radius: var(--md-shape-full);
-  background: var(--md-primary-container);
-  transition: background 150ms ease;
+  background: rgba(0, 0, 0, 0.85);
+  transition: color 150ms ease;
 }
 
-.ext-link:hover {
-  background: var(--md-primary);
-  color: var(--md-on-primary);
+.bili-redirect:hover {
+  color: #fff;
+}
+
+.redirect-icon {
+  font-size: 1.5rem;
 }
 
 .episode-bar {
