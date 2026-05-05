@@ -16,6 +16,8 @@
       />
     </main>
 
+    <BilibiliPlayer />
+
     <footer class="footer">
       <p>于虚幻中寻得一方宁静</p>
       <p class="uptime">本站已稳定运行 {{ uptime }}</p>
@@ -39,6 +41,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import SakuraEffect from './components/SakuraEffect.vue'
 import CategorySection from './components/CategorySection.vue'
+import BilibiliPlayer from './components/BilibiliPlayer.vue'
 import categories from './data/links.json'
 
 const API = 'https://www.dmoe.cc/random.php'
