@@ -3,13 +3,21 @@
     <h2 class="player-heading">追番</h2>
 
     <div class="player-wrapper">
-      <iframe
-        :src="`https://player.bilibili.com/player.html?ep_id=${current}&autoplay=0`"
-        scrolling="no"
-        frameborder="0"
-        allowfullscreen
-        class="player-frame"
-      ></iframe>
+      <template v-if="loading">
+        <div class="player-placeholder">加载中…</div>
+      </template>
+      <template v-else-if="playerUrl">
+        <iframe
+          :src="playerUrl"
+          allow="autoplay; encrypted-media"
+          allowfullscreen
+          sandbox="allow-scripts allow-same-origin allow-popups"
+          class="player-frame"
+        ></iframe>
+      </template>
+      <template v-else>
+        <div class="player-placeholder">无法加载播放器</div>
+      </template>
     </div>
 
     <div class="episode-bar">
@@ -17,7 +25,7 @@
         v-for="ep in episodes"
         :key="ep.id"
         :class="['ep-chip', { active: current === ep.id }]"
-        @click="current = ep.id"
+        @click="selectEp(ep)"
       >
         {{ ep.label }}
       </button>
@@ -26,21 +34,57 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
-const baseStart = 35595
-const baseEnd = 35624
-const special = 278737
+const API_BASE = 'https://api.bilibili.com/pgc/view/web/season?ep_id='
 
-const episodes = [
-  ...Array.from({ length: baseEnd - baseStart + 1 }, (_, i) => ({
-    id: baseStart + i,
-    label: `第${i + 1}集`,
-  })),
-  { id: special, label: 'SP' },
-]
+const episodes = ref([])
+const epMap = ref({})
+const current = ref(0)
+const loading = ref(true)
 
-const current = ref(baseStart)
+const playerUrl = computed(() => {
+  const ep = epMap.value[current.value]
+  if (!ep) return ''
+  return `https://player.bilibili.com/player.html?aid=${ep.aid}&cid=${ep.cid}&page=1&autoplay=0`
+})
+
+function selectEp(ep) {
+  current.value = ep.id
+}
+
+async function fetchSeason(epId) {
+  try {
+    const res = await fetch(`${API_BASE}${epId}`)
+    const data = await res.json()
+    if (data.code !== 0 || !data.result) return
+
+    const list = data.result.episodes || []
+    for (const ep of list) {
+      if (epMap.value[ep.id]) continue
+      epMap.value[ep.id] = {
+        aid: ep.aid,
+        cid: ep.cid,
+      }
+      episodes.value.push({
+        id: ep.id,
+        label: ep.title || `第${ep.episode || '?'}集`,
+      })
+    }
+    if (list.length > 0 && !current.value) {
+      current.value = list[0].id
+    }
+  } catch {
+    // ignore
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(async () => {
+  await fetchSeason(35595)
+  await fetchSeason(278737)
+})
 </script>
 
 <style scoped>
@@ -75,6 +119,16 @@ const current = ref(baseStart)
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+.player-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
 }
 
 .episode-bar {
